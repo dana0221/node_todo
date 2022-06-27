@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>간단한 ToDo 리스트 예제 실습</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body style="padding:50px; font:14px 'Lucida Grande', Helvetica, Arial, sans-serif;">
+  <h1>간단한 ToDo 리스트 예제 실습</h1>
+  <br><br>
+
+  <!-- 새로운 ToDo 항목 추가 -->
+  <form class="form-inline">
+    <div class="form-group">
+      <input type="text" class="form-control" id="new_todo" style="width:250px;" placeholder="새로운 할 일(공백없이 입력하세요)"/>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="add_todo()">추가</button>
+  </form>
+  <br>
+
+  <!-- ToDo 목록 -->
+  <table class="table">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>내용</th>
+      <th>상태</th>
+      <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr style="margin-bottom:20px;">
+        <td>${(i)}</td>
+        <td id="todo_title">title</td>
+        <td>
+          <button type="button" class="btn btn-success" id="todo_success_title">완료</button>
+          <button type="button" class="btn btn-success" id="todo_cancel_title" style="display:none">취소</button>
+        </td>
+        <td><button type="button" class="btn btn-danger" id="todo_delete_title">삭제</button></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
