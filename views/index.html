@@ -75,5 +75,21 @@
       cursor.continue()
     }
   }
+
+  // todo 목록 추가
+  function add_todo(){
+    let title = document.getElementById('new_todo').value
+    console.log(title)
+    writeDB(title)
+  }
+
+  function writeDB(title){
+    const db = request.result
+    const transaction = db.transaction(['todo'], 'readwrite')
+    const objStore = transaction.objectStore('todo')
+    const add_title = objStore.add({title:title, complete:false})
+
+    location.reload()
+  }
 </script>
 </html>
