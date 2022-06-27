@@ -30,17 +30,19 @@
       <th>삭제</th>
     </tr>
     </thead>
-    <tbody>
-      <tr style="margin-bottom:20px;">
-        <td>${(i)}</td>
-        <td id="todo_title">title</td>
-        <td>
-          <button type="button" class="btn btn-success" id="todo_success_title">완료</button>
-          <button type="button" class="btn btn-success" id="todo_cancel_title" style="display:none">취소</button>
-        </td>
-        <td><button type="button" class="btn btn-danger" id="todo_delete_title">삭제</button></td>
-      </tr>
-    </tbody>
+    <tbody></tbody>
   </table>
 </body>
+
+<!-- ToDo 기능 구현 내용 -->
+<script>
+  // indexedDB 사용
+  const idxedDB = window.indexedDB;	// indexedDB 가져오기
+  const request = idxedDB.open('TodoDB');   // TodoDB(db) 열기
+
+  request.onupgradeneeded = (e) => {
+    const db = e.target.result
+    db.createObjectStore('todo', {keyPath: 'title'})
+  }
+</script>
 </html>
