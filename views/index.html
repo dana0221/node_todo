@@ -44,5 +44,36 @@
     const db = e.target.result
     db.createObjectStore('todo', {keyPath: 'title'})
   }
+
+  // todo 목록 가져오기
+  request.onsuccess = (e) =>{
+    let i = 1
+    const list = request.result
+    const transaction = list.transaction('todo')
+
+    const objStore = transaction.objectStore('todo')
+    const cursorReq = objStore.openCursor()
+
+    cursorReq.onsuccess = (e) =>{
+      let cursor = e.target.result
+      let title = cursor.value.title
+      let complete = cursor.value.complete
+
+      console.log(complete, title)
+
+      todo_list = `<tr style="margin-bottom:20px;">
+						<td>${(i)}</td>
+						<td id="todo_${title}">${title}</td>
+						<td>
+							<button type="button" class="btn btn-success" id="todo_success_title">완료</button>
+							<button type="button" class="btn btn-success" id="todo_cancel_title" style="display:none">취소</button>
+						</td>
+						<td><button type="button" class="btn btn-danger" id="todo_delete_title">삭제</button></td>
+					</tr>`;
+
+      $('tbody').append(todo_list);
+      cursor.continue()
+    }
+  }
 </script>
 </html>
