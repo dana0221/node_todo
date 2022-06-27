@@ -14,7 +14,7 @@
   <!-- 새로운 ToDo 항목 추가 -->
   <form class="form-inline">
     <div class="form-group">
-      <input type="text" class="form-control" id="new_todo" style="width:250px;" placeholder="새로운 할 일(공백없이 입력하세요)"/>
+      <input type="text" class="form-control" id="new_todo" style="width:250px;" autocomplete="off" placeholder="새로운 할 일(공백없이 입력하세요)"/>
     </div>
     <button type="button" class="btn btn-primary" onclick="add_todo()">추가</button>
   </form>
@@ -56,10 +56,8 @@
 
     cursorReq.onsuccess = (e) =>{
       let cursor = e.target.result
-      let title = cursor.value.title
-      let complete = cursor.value.complete
-
-      console.log(complete, title)
+      let title = cursor.value.title    // DB title 값 가져오기
+      let complete = cursor.value.complete  // DB complete 값 가져오기
 
       todo_list = `<tr style="margin-bottom:20px;">
 						<td>${(i)}</td>
@@ -71,36 +69,35 @@
 						<td><button type="button" class="btn btn-danger" id="todo_delete_${title}">삭제</button></td>
 					</tr>`;
 
-      $('tbody').append(todo_list);
-      cursor.continue()
+      $('tbody').append(todo_list);   // todo 항목 추가
+      cursor.continue()   // DB를 반복적으로 조회
       i++
 
       $('#todo_success_' + title).on('click', function(){
-        success_todo(title)
+        success_todo(title)  // 확인 함수 호출
       })
 
       $('#todo_cancel_' + title).on('click', function(){
-        cancel_todo(title)
+        cancel_todo(title)  // 취소 함수 호출
       })
 
       $('#todo_delete_' + title).on('click', function(){
-        remove_todo(title)
+        remove_todo(title)  // 삭제 함수 호출
       })
     }
   }
 
   // todo 목록 추가
   function add_todo(){
-    let title = document.getElementById('new_todo').value
-    console.log(title)
-    writeDB(title)
+    let title = document.getElementById('new_todo').value   // 새로운 리스트 값 가져오기
+    writeDB(title)  // 리스트 생성 함수 호출
   }
 
   function writeDB(title){
     const db = request.result
-    const transaction = db.transaction(['todo'], 'readwrite')
+    const transaction = db.transaction(['todo'], 'readwrite')     // DB를 읽고 쓸 수 있도록 불러오기
     const objStore = transaction.objectStore('todo')
-    const add_title = objStore.add({title:title, complete:false})
+    const add_title = objStore.add({title:title, complete:false}) // DB에 값 추가하기(complete의 기본값 : false)
 
     location.reload()
   }
@@ -110,14 +107,14 @@
     const db = request.result
     const transaction = db.transaction(['todo'], 'readwrite')
     const objStore = transaction.objectStore('todo')
-    const objStoreReq = objStore.get(key)
-    const updateReq = objStore.put({title:key, complete:true})
+    const objStoreReq = objStore.get(key)                       // 가져온 key 값을 사용하여 불러오기
+    const updateReq = objStore.put({title:key, complete:true})  // complete 값을 true로 변경하기
 
     console.log('success')
 
+    // 취소 버튼 보여주고 확인 버튼 숨기기, 글자 중앙 선 넣기
     $('#todo_success_' + key).hide()
     $('#todo_cancel_' + key).show()
-    list = document.getElementById('todo_' + key)
     $('#todo_' + key).css({ textDecoration: "line-through" });
   }
 
@@ -127,10 +124,11 @@
     const transaction = db.transaction(['todo'], 'readwrite')
     const objStore = transaction.objectStore('todo')
     const objStoreReq = objStore.get(key)
-    const updateReq = objStore.put({title:key, complete:false})
+    const updateReq = objStore.put({title:key, complete:false}) // complete 값을 false로 변경하기
 
     console.log('cancel')
 
+    // 확인 버튼 보여주고 취소 버튼 숨기기, 글자 중앙 선 없애기
     $('#todo_success_' + key).show()
     $('#todo_cancel_' + key).hide()
     $('#todo_' + key).css({ textDecoration:"none" })
@@ -141,7 +139,7 @@
     const db = request.result
     const transaction = db.transaction(['todo'], 'readwrite')
     const objStore = transaction.objectStore('todo')
-    const delete_todo = objStore.delete(key)
+    const delete_todo = objStore.delete(key)    // key 값을 사용하여 해당 DB 삭제
 
     location.reload()
   }
