@@ -102,7 +102,7 @@
     location.reload()
   }
 
-  // todo 완료
+  // todo 목록 완료
   function success_todo(key){
     const db = request.result
     const transaction = db.transaction(['todo'], 'readwrite')
@@ -118,7 +118,7 @@
     $('#todo_' + key).css({ textDecoration: "line-through" });
   }
 
-  // todo 미완료
+  // todo 목록 미완료
   function cancel_todo(key){
     const db = request.result
     const transaction = db.transaction(['todo'], 'readwrite')
