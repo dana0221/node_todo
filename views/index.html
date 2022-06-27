@@ -73,6 +73,10 @@
 
       $('tbody').append(todo_list);
       cursor.continue()
+
+      $('#todo_success_' + title).on('click', function(){
+        success_todo(title)
+      })
     }
   }
 
@@ -90,6 +94,22 @@
     const add_title = objStore.add({title:title, complete:false})
 
     location.reload()
+  }
+
+  // todo 완료
+  function success_todo(key){
+    const db = request.result
+    const transaction = db.transaction(['todo'], 'readwrite')
+    const objStore = transaction.objectStore('todo')
+    const objStoreReq = objStore.get(key)
+    const updateReq = objStore.put({title:key, complete:true})
+
+    console.log('success')
+
+    $('#todo_success_' + key).hide()
+    $('#todo_cancel_' + key).show()
+    list = document.getElementById('todo_' + key)
+    $('#todo_' + key).css({ textDecoration: "line-through" });
   }
 </script>
 </html>
