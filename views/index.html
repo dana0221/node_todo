@@ -82,6 +82,9 @@
         cancel_todo(title)
       })
 
+      $('#todo_delete_' + title).on('click', function(){
+        remove_todo(title)
+      })
     }
   }
 
@@ -130,6 +133,16 @@
     $('#todo_success_' + key).show()
     $('#todo_cancel_' + key).hide()
     $('#todo_' + key).css({ textDecoration:"none" })
+  }
+
+  // todo 삭제
+  function remove_todo(key){
+    const db = request.result
+    const transaction = db.transaction(['todo'], 'readwrite')
+    const objStore = transaction.objectStore('todo')
+    const delete_todo = objStore.delete(key)
+
+    location.reload()
   }
 </script>
 </html>
