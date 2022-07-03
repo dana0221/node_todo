@@ -6,15 +6,63 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <style>
+    body{
+      padding:50px;
+      font:14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    }
+
+    #new_todo{
+      width:250px;
+    }
+
+    #popup{
+      width:350px;
+      height:200px;
+      float:left;
+      left:50%;
+      transform:translate(-50%);
+      position:relative;
+      border:1px solid #409fb4;
+      border-radius:5px;
+      background-color:white;
+      display:none;
+    }
+
+      #content{
+        width:100%;
+        height:100px;
+        float:left;
+        position:relative;
+      }
+
+        #content input{
+          width:250px;
+          height:30px;
+          float:left;
+          margin:50px 0 0 50px;
+          border:1px solid #409fb4;
+          position:relative;
+        }
+
+      #popup button{
+        width:55px;
+        height:30px;
+        float:left;
+        margin-top:30px;
+        margin-left:30px;
+        position:relative;
+      }
+  </style>
 </head>
-<body style="padding:50px; font:14px 'Lucida Grande', Helvetica, Arial, sans-serif;">
+<body style="">
   <h1>간단한 ToDo 리스트 예제 실습</h1>
   <br><br>
 
   <!-- 새로운 ToDo 항목 추가 -->
   <form class="form-inline">
     <div class="form-group">
-      <input type="text" class="form-control" id="new_todo" style="width:250px;" autocomplete="off" placeholder="새로운 할 일(공백없이 입력하세요)"/>
+      <input type="text" class="form-control" id="new_todo" autocomplete="off" placeholder="새로운 할 일(공백없이 입력하세요)"/>
     </div>
     <button type="button" class="btn btn-primary" onclick="add_todo()">추가</button>
   </form>
@@ -32,13 +80,22 @@
     </thead>
     <tbody></tbody>
   </table>
+
+  <div id="popup">
+    <div id="content">
+      <input type="text" id="title_input" class="form-control" autocomplete="off" placeholder="title">
+    </div>
+
+    <button type="button" id="update" class="btn btn-info" style="margin-left:110px;">수정</button>
+    <button type="button" id="cancel" class="btn btn-info">닫기</button>
+  </div>
 </body>
 
 <!-- ToDo 기능 구현 내용 -->
 <script>
   // indexedDB 사용
-  const idxedDB = window.indexedDB;	// indexedDB 가져오기
-  const request = idxedDB.open('TodoDB');   // TodoDB(db) 열기
+  const indexedDB = window.indexedDB;	// indexedDB 가져오기
+  const request = indexedDB.open('TodoDB');   // TodoDB(db) 열기
 
   request.onupgradeneeded = (e) => {
     const db = e.target.result
@@ -61,7 +118,7 @@
 
       todo_list = `<tr style="margin-bottom:20px;">
 						<td>${(i)}</td>
-						<td id="todo_${title}">${title}</td>
+						<td id="todo_${title}" style="cursor:pointer;">${title}</td>
 						<td>
 							<button type="button" class="btn btn-success" id="todo_success_${title}">완료</button>
 							<button type="button" class="btn btn-success" id="todo_cancel_${title}" style="display:none">취소</button>
@@ -83,6 +140,18 @@
 
       $('#todo_delete_' + title).on('click', function(){
         remove_todo(title)  // 삭제 함수 호출
+      })
+
+      $('#todo_' + title).on('click', function(){
+        $('#popup').show()
+        document.getElementById('title_input').placeholder = title
+
+        update_todo(title, complete)
+      })
+
+
+      $('#cancel').on('click', function(){
+        $('#popup').hide()
       })
     }
   }
@@ -132,6 +201,23 @@
     $('#todo_success_' + key).show()
     $('#todo_cancel_' + key).hide()
     $('#todo_' + key).css({ textDecoration:"none" })
+  }
+
+  // todo 수정
+  function update_todo(key, complete){
+    $('#update').on('click', function(){
+      const update_title = document.getElementById('title_input').value
+      console.log(key)
+
+      const db = request.result
+      const transaction = db.transaction(['todo'], 'readwrite')
+      const objStore = transaction.objectStore('todo')
+      const delete_todo = objStore.delete(key)    // key 값을 사용하여 해당 DB 삭제
+      const updateReq = objStore.put({title:update_title, complete:complete}) // title 값 변경하기
+
+      location.reload()
+    })
+
   }
 
   // todo 삭제
